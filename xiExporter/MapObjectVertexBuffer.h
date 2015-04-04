@@ -11,6 +11,8 @@ private:
     LPDIRECT3DVERTEXBUFFER9 m_Vertexs;
     unsigned int m_VertexCount;
     LPDIRECT3DINDEXBUFFER9 m_Indexes;
+    CONST float* m_VertexData;
+    short* m_IndexData;
     unsigned int m_IndexCount;
 
 public:

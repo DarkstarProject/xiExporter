@@ -41,7 +41,6 @@ std::string* MapObject::ToObj(unsigned int ID, D3DXMATRIX matrix, D3DCULL cull)
     break;
   }
 
-
   std::string* output = new std::string(buf->str());
 
   delete buf;

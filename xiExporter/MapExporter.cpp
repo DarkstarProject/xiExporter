@@ -110,6 +110,7 @@ bool MapExporter::ExportMap()
           return false;
         }
 
+        printf("Writing Objects\n");
         for (unsigned int i = 0; i < m_ObjectMapCount; i++)
         {
             if( m_ObjectMap[i].Object )
@@ -120,6 +121,9 @@ bool MapExporter::ExportMap()
 
                 delete out;
             }
+
+            int progress = (i / (float)m_ObjectMapCount) * 100;
+            printf("Progress: %%%d\n", progress);
         }
 
         objFile.close();
@@ -133,9 +137,6 @@ bool MapExporter::ExportMap()
 std::string* MapExporter::ObjectMapToObj(unsigned int ID, ObjectMap* obj)
 {
     return obj->Object->ToObj(ID, obj->MatWorld, obj->CullMode);
-    // m_Renderer->SetTransform(D3DTS_WORLD, &m_ObjectMap[i].MatWorld);
-    // m_Renderer->SetRenderState(D3DRS_CULLMODE, m_ObjectMap[i].CullMode);
-    // m_ObjectMap[i].Object->RenderObject();
 }
 
 unsigned int MapExporter::GetZoneID()
