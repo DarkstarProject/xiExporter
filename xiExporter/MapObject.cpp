@@ -30,15 +30,23 @@ std::string* MapObject::ToObj(unsigned int ID, D3DXMATRIX matrix, D3DCULL cull)
   std::size_t pos = tempId.find_first_of(-51);
 
   std::stringstream* buf = new std::stringstream();
-  *buf << "o ";
+
+  // *buf << "o ";
+  // buf->write(m_ID, pos);
+  // *buf << ID << "\n";
+  //
+  *buf << "g ";
   buf->write(m_ID, pos);
   *buf << ID << "\n";
 
   // output objects
   for(int i=0; i<m_ObjectBufferCount; i++){
-    m_ObjectBuffers[i]->WriteObj(buf, matrix, cull);
-    // only output one for now
-    break;
+    m_ObjectBuffers[i]->WriteVertexes(buf, matrix, cull);
+  }
+
+  MapObjectVertexBuffer::facePos = 0;
+  for(int i=0; i<m_ObjectBufferCount; i++){
+    m_ObjectBuffers[i]->WriteFaces(buf, matrix, cull);
   }
 
   std::string* output = new std::string(buf->str());

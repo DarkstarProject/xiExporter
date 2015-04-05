@@ -7,23 +7,20 @@
 class MapObjectVertexBuffer
 {
 private:
-    bool m_Render;
-    LPDIRECT3DVERTEXBUFFER9 m_Vertexs;
     unsigned int m_VertexCount;
-    LPDIRECT3DINDEXBUFFER9 m_Indexes;
     CONST float* m_VertexData;
     short* m_IndexData;
     unsigned int m_IndexCount;
 
 public:
-    MapObjectVertexBuffer() : m_Vertexs(NULL), m_VertexCount(NULL), m_Indexes(NULL), m_IndexCount(NULL) {}
+    static int vertexCount;
+    static int facePos;
+    MapObjectVertexBuffer() : m_VertexCount(NULL), m_VertexData(NULL), m_IndexData(NULL), m_IndexCount(NULL) {}
     ~MapObjectVertexBuffer();
     void InitBuffers(UINT NumIndexes, UINT NumVerteses, CONST void* pIndexData, CONST void* pVertexData);
 
-    void RenderBuffer();
-    void WriteObj(std::stringstream* buf, D3DXMATRIX matrix, D3DCULL cull);
     void ReleaseBuffer();
-
-    void SetRender(bool Value) { m_Render = Value; }
+    void WriteVertexes(std::stringstream* buf, D3DXMATRIX matrix, D3DCULL cull);
+    void WriteFaces(std::stringstream* buf, D3DXMATRIX matrix, D3DCULL cull);
 
 };
