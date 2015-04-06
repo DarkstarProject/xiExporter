@@ -44,7 +44,6 @@ std::string* MapObject::ToObj(unsigned int ID, D3DXMATRIX matrix, D3DCULL cull)
     m_ObjectBuffers[i]->WriteVertexes(buf, matrix, cull);
   }
 
-  MapObjectVertexBuffer::facePos = 0;
   for(int i=0; i<m_ObjectBufferCount; i++){
     m_ObjectBuffers[i]->WriteFaces(buf, matrix, cull);
   }

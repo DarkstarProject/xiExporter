@@ -1,1 +1,1 @@
-XiExporter------------------This must be installed in order to build:http://www.microsoft.com/en-us/download/confirmation.aspx?id=6812
+XiExporter------------------This must be installed in order to build:http://www.microsoft.com/en-us/download/confirmation.aspx?id=6812## Converting Mesh to Darkstar Mesh1. Flip the Z axis2. Flip the Y axis2. Flip faces which are wrong. You can easily tell this in blender by the color   of the object## RecastDemo Settings* Tilesize 64## Using NavmeshTransforming coordinates to Detour:x = xy = ffxi_zz = -ffxi_y

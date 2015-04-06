@@ -14,7 +14,6 @@ private:
 
 public:
     static int vertexCount;
-    static int facePos;
     MapObjectVertexBuffer() : m_VertexCount(NULL), m_VertexData(NULL), m_IndexData(NULL), m_IndexCount(NULL) {}
     ~MapObjectVertexBuffer();
     void InitBuffers(UINT NumIndexes, UINT NumVerteses, CONST void* pIndexData, CONST void* pVertexData);
