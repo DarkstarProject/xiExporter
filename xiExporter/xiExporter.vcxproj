@@ -66,7 +66,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Callback.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MapExporter.cpp" />
     <ClCompile Include="MapObject.cpp" />
@@ -74,7 +73,6 @@
     <ClCompile Include="ObjectBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Callback.h" />
     <ClInclude Include="MapExporter.h" />
     <ClInclude Include="MapLib.h" />
     <ClInclude Include="MapObject.h" />
