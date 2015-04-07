@@ -14,12 +14,19 @@ You'll then need to add the d3dx9.h, lib, and dll to the linker in Visual Studio
 
 ## Importing Into Blender
 
-Currently, all objects on the map are exporting into individual files. To create
-the full mesh:
+**Note**: Turn on VBOs or you'll be in a world of hurt.
+
+1. Open User Preferences (CTRL+ALT+U).
+2. Go to System.
+3. Check VBOs.
+
+Currently, maps are exported into individual files. To create
+the full mesh you'll need to import all the objects into one file.
+Follow these steps:
 
 1. Copy all OBJ files into "C:\objects".
 2. Open a new Blender file and delete everything.
-3. Open up the "Text Editor" window.
+3. Open up the "Text Editor" window (Click bottom left cube).
 4. Create a new file (Ctrl+N).
 5. Paste in this script:
 
@@ -27,7 +34,8 @@ the full mesh:
 import os
 import bpy
 
-# put the location to the folder where the objs are located here in this fashion# this line will only work on windows ie C:\objects
+# put the location to the folder where the objs are located here in this fashion
+# this line will only work on windows ie C:\objects
 path_to_obj_dir = os.path.join('C:\\', 'objects')
 
 # get list of all files in directory
@@ -43,7 +51,9 @@ for item in obj_list:
 ```
 
 6. Run the script.
-7. Export the map as OBJ and you're done.
+7. Go back to 3D View (Click bottom right again. The map will be upside down;
+   rotate with middle mouse button).
+8. Export the map as OBJ and you're done.
 
 ## Prepping Mesh for Navmeshing
 

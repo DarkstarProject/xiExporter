@@ -35,9 +35,9 @@ std::string* MapObject::ToObj(unsigned int ID, D3DXMATRIX matrix, D3DCULL cull)
   // buf->write(m_ID, pos);
   // *buf << ID << "\n";
   //
-  *buf << "g ";
-  buf->write(m_ID, pos);
-  *buf << ID << "\n";
+  // *buf << "g ";
+  // buf->write(m_ID, pos);
+  // *buf << ID << "\n";
 
   // output objects
   for(int i=0; i<m_ObjectBufferCount; i++){
