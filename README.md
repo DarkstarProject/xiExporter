@@ -36,7 +36,8 @@ file_list = sorted(os.listdir(path_to_obj_dir))
 # get a list of files ending in 'obj'
 obj_list = [item for item in file_list if item[-3:] == 'obj']
 
-# loop through the strings in obj_list and add the files to the scenefor item in obj_list:
+# loop through the strings in obj_list and add the files to the scene
+for item in obj_list:
     path_to_file = os.path.join(path_to_obj_dir, item)
     bpy.ops.import_scene.obj(filepath = path_to_file)
 ```
