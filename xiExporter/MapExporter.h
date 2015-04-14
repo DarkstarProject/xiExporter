@@ -36,8 +36,9 @@ protected:
    virtual bool HandleNewTexture(char* ID, char* pdata) { return true; }
    virtual void HandleProgress(const char* pStage, UINT Progress, UINT Total) { }
 public:
-    MapExporter(char* ffxiPath);
+    MapExporter();
     virtual ~MapExporter();
+    void SetPath(char* ffxiPath);
 
     bool LoadMap(unsigned int ZoneID);
 

@@ -1,11 +1,10 @@
 #include "MapExporter.h"
 
-MapExporter::MapExporter(char* ffxiPath) : 
+MapExporter::MapExporter() :
     m_MapLib(NULL), m_ObjectBuffer(NULL), m_ObjectMap(NULL), m_ObjectMapCount(NULL), m_Loaded(false)
 {
     m_MapLib = new FFxiMapLib::MapLib();
     m_ZoneID = 0;
-    m_MapLib->SetGamePath(ffxiPath);
     m_MapLib->AddCallback(this);
 }
 
@@ -28,6 +27,11 @@ MapExporter::~MapExporter()
         delete m_MapLib;
         m_MapLib = NULL;
     }
+}
+
+void MapExporter::SetPath(char* ffxiPath)
+{
+    m_MapLib->SetGamePath(ffxiPath);
 }
 
 bool MapExporter::HandleNewObject(char* ID, UINT NumIndexes, UINT NumVerteses, CONST void* pIndexData, CONST void* pVertexData)
