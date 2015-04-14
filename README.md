@@ -47,13 +47,18 @@ for item in obj_list:
 
 ## Prepping Mesh for Navmeshing
 
-1. Flip the Z axis
-2. Flip the Y axis
-2. Flip wrong faces. In Blender blue faces are facing the wrong way.
+1. Mirror the Y axis (Order matters)
+2. Mirror the Z axis
+3. Flip wrong faces (select object, tab, a, w, flip faces, press tab to exit). In Blender blue faces are facing the wrong way.
+4. Delete walkable meshes. Meshes which do not stop player movement (bushes)
+   should be removed.
+5. Delete walkable areas which shouldn't be walkable (lakes.)
 
 ## RecastDemo Settings
 
 Use these settings when creating a navmesh.
 
-* Tilesize 64
-
+* Tile Size largest size
+* Cell Size 0.40
+* Agent Radius 0.6
+* Agent Max Climb 1.1
