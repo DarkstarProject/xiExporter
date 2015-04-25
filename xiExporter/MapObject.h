@@ -19,6 +19,8 @@ public:
     MapObject(char* ID);
     ~MapObject();
 
+	int m_ObjID;
+
     void Release();
     unsigned int AddVertexBuffer(UINT NumIndexes, UINT NumVerteses, CONST void* pIndexData, CONST void* pVertexData);
 

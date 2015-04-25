@@ -109,19 +109,20 @@ bool MapExporter::ExportMap()
     if( m_Loaded && m_ObjectBuffer && m_ObjectMap )
     {
 
-        // std::ofstream objFile("ffxiMap.obj");
-        //
-        // if(!objFile.is_open()){
-        //   return false;
-        // }
-
         printf("Writing Objects\n");
         for (unsigned int i = 0; i < m_ObjectMapCount; i++)
         {
           MapObjectVertexBuffer::vertexCount = 1;
 
           char name[100];
-          sprintf(name, "obj_%d.obj", i);
+          char* objName = "";
+          int id = 0;
+          if(m_ObjectMap[i].Object){
+            objName = m_ObjectMap[i].Object->GetID();
+            id = m_ObjectMap[i].Object->m_ObjID;
+          }
+
+          sprintf(name, "obj_%d_%d_%.15s.obj", i, id, objName);
           std::ofstream objFile(name);
 
           if(!objFile.is_open()){
@@ -130,6 +131,7 @@ bool MapExporter::ExportMap()
 
             if( m_ObjectMap[i].Object)
             {
+              // if(m_ObjectMap[i].Object->
                 std::string* out = ObjectMapToObj(i, &m_ObjectMap[i]);
                 objFile << out->c_str();
                 objFile << "\n";
@@ -139,9 +141,6 @@ bool MapExporter::ExportMap()
 
             int progress = (i / (float)m_ObjectMapCount) * 100;
             printf("Progress: %%%d. Exporting (%d)\n", progress, i);
-            // if(i == 700){
-            //   break;
-            // }
             objFile.close();
         }
 

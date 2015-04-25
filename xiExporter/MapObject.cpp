@@ -2,9 +2,11 @@
 
 MapObject::MapObject(char* ID) : m_ObjectBufferCount(NULL)
 {
+  static int objCount = 0;
     memset(m_ID, 0, 16);
     memcpy(m_ID, ID, 16);
     memset(this->m_ObjectBuffers, 0, sizeof(this->m_ObjectBuffers));
+    m_ObjID = ++objCount;
 }
 
 MapObject::~MapObject()
