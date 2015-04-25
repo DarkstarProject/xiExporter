@@ -14,19 +14,12 @@ You'll then need to add the d3dx9.h, lib, and dll to the linker in Visual Studio
 
 ## Importing Into Blender
 
-**Note**: Turn on VBOs or you'll be in a world of hurt.
-
-1. Open User Preferences (CTRL+ALT+U).
-2. Go to System.
-3. Check VBOs.
-
-Currently, maps are exported into individual files. To create
-the full mesh you'll need to import all the objects into one file.
-Follow these steps:
+Currently, all objects on the map are exporting into individual files. To create
+the full mesh:
 
 1. Copy all OBJ files into "C:\objects".
 2. Open a new Blender file and delete everything.
-3. Open up the "Text Editor" window (Click bottom left cube).
+3. Open up the "Text Editor" window.
 4. Create a new file (Ctrl+N).
 5. Paste in this script:
 
@@ -34,8 +27,7 @@ Follow these steps:
 import os
 import bpy
 
-# put the location to the folder where the objs are located here in this fashion
-# this line will only work on windows ie C:\objects
+# put the location to the folder where the objs are located here in this fashion# this line will only work on windows ie C:\objects
 path_to_obj_dir = os.path.join('C:\\', 'objects')
 
 # get list of all files in directory
@@ -51,19 +43,35 @@ for item in obj_list:
 ```
 
 6. Run the script.
-7. Go back to 3D View (Click bottom right again. The map will be upside down;
-   rotate with middle mouse button).
-8. Export the map as OBJ and you're done.
+7. Export the map as OBJ and you're done.
 
 ## Prepping Mesh for Navmeshing
 
-1. Flip the Z axis
-2. Flip the Y axis
-2. Flip wrong faces. In Blender blue faces are facing the wrong way.
+1. Mirror the Y axis (Order matters)
+2. Mirror the Z axis
+3. Flip wrong faces (select object, tab, a, w, flip faces, press tab to exit). In Blender blue faces are facing the wrong way.
+4. Delete walkable meshes. Meshes which do not stop player movement (bushes)
+   should be removed.
+5. Delete walkable areas which shouldn't be walkable (lakes.)
+
+### Checking Coordinates
+
+To validate the map has been rotated correctly, jump into the game and compare
+points from the game via @pos and points in Blender. The y and z coordinates from FFXI
+should be swapped and the new z should be reversed.
+
+Example:
+
+@pos in FFXI -> (100, 5, 20)
+Formula: (x, y, -z)
+So the coordinates in Blender should be (100, 20, -5).
+
+Easiest way to test this is by moving the 3D cursor to the position. In Blender
+press N and scroll down to 3D Cursor, then input the coordinates.
 
 ## RecastDemo Settings
 
 Use these settings when creating a navmesh.
 
-* Tilesize 64
-
+* Tile Size 256
+* Cell Size 0.40
