@@ -22,50 +22,19 @@ xiExporter.exe {zoneId}
 ```
 
 All the maps objects will be exported to your current directory.
+Add a regex for mesh name to filters.txt (ensure it's in same directory as exe) to include/exclude objects (useful for filtering out flora).
 
 ## Importing Into Blender
-
-Currently, all objects on the map are exporting into individual files. To create
-the full mesh:
-
-1. Copy all OBJ files into "C:\objects".
-2. Open a new Blender file and delete everything.
-3. Open up the "Text Editor" window.
-4. Create a new file (Ctrl+N).
-5. Paste in this script:
-
-```
-import os
-import bpy
-
-
-# put the location to the folder where the objs are located here in this fashion# this line will only work on windows ie C:\objects
-path_to_obj_dir = os.path.join('C:\\', 'objects')
-
-# get list of all files in directory
-file_list = sorted(os.listdir(path_to_obj_dir))
-
-# get a list of files ending in 'obj'
-obj_list = [item for item in file_list if item[-3:] == 'obj']
-
-
-# loop through the strings in obj_list and add the files to the scene
-for item in obj_list:
-    path_to_file = os.path.join(path_to_obj_dir, item)
-    bpy.ops.import_scene.obj(filepath = path_to_file)
-```
-
-6. Run the script.
-7. Export the map as OBJ and you're done.
+Delete all objects in current scene (press [A] key twice > Del)
+File > Import > Wavefront (.obj)
+In bottom left pane uncheck split by group if you want to remove whole objects instead of individual meshes.
 
 ## Prepping Mesh for Navmeshing
 
-1. Mirror the Y axis (Order matters)
-2. Mirror the Z axis
-3. Flip wrong faces (select object, tab, a, w, flip faces, press tab to exit). In Blender blue faces are facing the wrong way.
-4. Delete walkable meshes. Meshes which do not stop player movement (bushes)
+1. Flip wrong faces (select object, tab, a, w, flip faces, press tab to exit). In Blender blue faces are facing the wrong way.
+2. Delete walkable meshes. Meshes which do not stop player movement (bushes)
    should be removed.
-5. Delete walkable areas which shouldn't be walkable (lakes.)
+3. Delete walkable areas which shouldn't be walkable (lakes.)
 
 ### Flipping Objects in Batches
 
@@ -98,7 +67,7 @@ should be swapped and the new z should be reversed.
 
 Example:
 
-@pos in FFXI -> (100, 5, 20)
+!pos in FFXI -> (100, 5, 20)
 Formula: (x, z, -y)
 So the coordinates in Blender should be (100, 20, -5).
 
