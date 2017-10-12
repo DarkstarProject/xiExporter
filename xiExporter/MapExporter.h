@@ -9,6 +9,7 @@
 #include "MapObject.h"
 #include <fstream>
 #include <string>
+#include <vector>
 
 struct ObjectMap
 {
@@ -29,7 +30,9 @@ private:
     bool m_Loaded;
     unsigned int m_ZoneID;
 
-    std::string* ObjectMapToObj(unsigned int ID, ObjectMap* obj);
+    bool CanDumpObj(const std::string& name);
+
+    std::string* ObjectMapToObj(unsigned int ID, ObjectMap* obj, uint64_t& totalVerts);
 protected:
     //callbacks
    virtual bool HandleNewObject(char* ID, UINT NumIndexes, UINT NumVerteses, CONST void* pIndexData, CONST void* pVertexData);
@@ -38,10 +41,11 @@ protected:
 public:
     MapExporter();
     virtual ~MapExporter();
-    void SetPath(char* ffxiPath);
-
+    void SetPath(const char* ffxiPath);
+    
     bool LoadMap(unsigned int ZoneID);
-
     bool ExportMap();
     unsigned int GetZoneID();
+    std::vector<std::string> filters;
+
 };

@@ -31,5 +31,5 @@ public:
     
     //set
     void SetRender(bool value) { m_Render = value; }
-    std::string* ToObj(unsigned int ID, D3DXMATRIX matrix, D3DCULL cull);
+    std::string* ToObj(unsigned int ID, D3DXMATRIX matrix, D3DCULL cull, uint64_t& totalVerts);
 };

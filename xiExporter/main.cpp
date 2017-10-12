@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include "MapExporter.h"
+#include <vector>
 
 MapExporter mapExporter;
 
@@ -10,7 +11,8 @@ int main( int argc, const char* argv[] )
 
   // behemoth dominion
   int zoneId = 127;
-  char* path = "C:\\Program Files (x86)\\PlayOnline\\SquareEnix\\FINAL FANTASY XI\\";
+  const char* path = "C:\\Program Files (x86)\\PlayOnline\\SquareEnix\\FINAL FANTASY XI\\";
+
   if(argc >= 2){
     zoneId = atoi(argv[1]);
   } else if(argc == 3){

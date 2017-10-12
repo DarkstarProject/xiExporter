@@ -3,6 +3,7 @@
 #include <d3dx9.h>
 #include <iostream>
 #include <sstream>
+#include <cstdint>
 
 class MapObjectVertexBuffer
 {
@@ -19,7 +20,7 @@ public:
     void InitBuffers(UINT NumIndexes, UINT NumVerteses, CONST void* pIndexData, CONST void* pVertexData);
 
     void ReleaseBuffer();
-    void WriteVertexes(std::stringstream* buf, D3DXMATRIX matrix, D3DCULL cull);
-    void WriteFaces(std::stringstream* buf, D3DXMATRIX matrix, D3DCULL cull);
+    UINT32 WriteVertexes(std::stringstream* buf, D3DXMATRIX matrix, D3DCULL cull);
+    UINT32 WriteFaces(std::stringstream* buf, D3DXMATRIX matrix, D3DCULL cull, uint64_t& totalVerts);
 
 };

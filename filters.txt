@@ -1,0 +1,10 @@
+# test filter
+# usage: inc|include|exc|exclude re <regex>
+# or inc|include|exc|exclude fullName
+# note: if your shit is fucked double check you didnt fuck up the filters
+# include takes priority and overwrites any excludes which match its filter (see example below)
+
+excl re .*_w[a-zA-Z0-9]*_h
+excl re roof.*
+excl re .*roof.*
+incl re .*_w(?:05|05[a-zA-Z]*)_h

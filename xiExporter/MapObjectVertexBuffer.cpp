@@ -17,7 +17,7 @@ void MapObjectVertexBuffer::InitBuffers(UINT NumIndexes, UINT NumVerteses, CONST
     m_IndexCount = NumIndexes;
 }
 
-void MapObjectVertexBuffer::WriteVertexes(std::stringstream* buf, D3DXMATRIX worldMatrix, D3DCULL cull)
+UINT32 MapObjectVertexBuffer::WriteVertexes(std::stringstream* buf, D3DXMATRIX worldMatrix, D3DCULL cull)
 {
 
   // vertices
@@ -25,6 +25,7 @@ void MapObjectVertexBuffer::WriteVertexes(std::stringstream* buf, D3DXMATRIX wor
   // the array contains floats and will skip by 4 bytes for us
   // so this can be divided by 4
   int vertexLength = 36/4;
+  UINT32 ret = 0;
   for(unsigned int i=0; i<m_VertexCount*vertexLength; i+=vertexLength){
 
     float x = m_VertexData[i];
@@ -36,15 +37,16 @@ void MapObjectVertexBuffer::WriteVertexes(std::stringstream* buf, D3DXMATRIX wor
     // transform point to world space
     D3DXVec4Transform(&worldVector, &vector, &worldMatrix);
 
-    *buf << "v " << std::fixed << worldVector.x << " " << std::fixed << worldVector.y << " " << std::fixed << worldVector.z << "\n";
+    *buf << "v " << std::fixed << worldVector.x * -1.0f << " " << std::fixed << worldVector.y * -1.0f << " " << std::fixed << worldVector.z << "\n";
+    ret++;
   }
-
+  return ret;
 }
 
-void MapObjectVertexBuffer::WriteFaces(std::stringstream* buf, D3DXMATRIX worldMatrix, D3DCULL cull)
+UINT32 MapObjectVertexBuffer::WriteFaces(std::stringstream* buf, D3DXMATRIX worldMatrix, D3DCULL cull, uint64_t& totalVerts)
 {
-
   // paste faces
+  uint32_t ret = totalVerts;
   for(unsigned int i=0; i<m_IndexCount; i++){
     unsigned short f1, f2, f3;
 
@@ -55,25 +57,24 @@ void MapObjectVertexBuffer::WriteFaces(std::stringstream* buf, D3DXMATRIX worldM
 
     f1 = m_IndexData[i] + MapObjectVertexBuffer::vertexCount;
 
-    *buf << "f " << f1 << " ";
+    *buf << "f " << f1 + ret << " ";
 
     if(i%2 == 0){
       f2 = m_IndexData[i+1] + MapObjectVertexBuffer::vertexCount;
       f3 = m_IndexData[i+2] + MapObjectVertexBuffer::vertexCount;
 
-      *buf << f2 << " ";
-      *buf << f3 << "\n";
+      *buf << f2 + ret << " ";
+      *buf << f3 + ret << "\n";
 
     } else {
       f2 = m_IndexData[i+2] + MapObjectVertexBuffer::vertexCount;
       f3 = m_IndexData[i+1] + MapObjectVertexBuffer::vertexCount;
 
-      *buf << f2 << " ";
-      *buf << f3 << "\n";
+      *buf << f2 + ret << " ";
+      *buf << f3 + ret << "\n";
 
     }
-
   }
-
   MapObjectVertexBuffer::vertexCount += m_VertexCount;
+  return m_VertexCount;
 }

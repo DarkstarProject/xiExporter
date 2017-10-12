@@ -1,4 +1,7 @@
 #include "MapExporter.h"
+#include <regex>
+#include <string>
+#include <vector>
 
 MapExporter::MapExporter() :
     m_MapLib(NULL), m_ObjectBuffer(NULL), m_ObjectMap(NULL), m_ObjectMapCount(NULL), m_Loaded(false)
@@ -6,6 +9,29 @@ MapExporter::MapExporter() :
     m_MapLib = new FFxiMapLib::MapLib();
     m_ZoneID = 0;
     m_MapLib->AddCallback(this);
+
+    std::ifstream infile("./filters.txt");
+    std::string line = "";
+
+    if (infile && infile.good())
+    {
+       while (std::getline(infile, line))
+       {
+          if (line.empty() || line[0] == '\0' || line[0] == '#')
+             continue;
+
+          std::string pushLn = "";
+          for (int i = 0; i < line.size(); ++i)
+          {
+             char c = line[i];
+             if (c == '\r' || c == '\n' || c == '\0' || c == '#')
+                break;
+             pushLn += c;
+          }
+          if (pushLn.size() >= 5)
+             filters.push_back(pushLn);
+       }
+    }
 }
 
 MapExporter::~MapExporter()
@@ -29,7 +55,7 @@ MapExporter::~MapExporter()
     }
 }
 
-void MapExporter::SetPath(char* ffxiPath)
+void MapExporter::SetPath(const char* ffxiPath)
 {
     m_MapLib->SetGamePath(ffxiPath);
 }
@@ -108,22 +134,41 @@ bool MapExporter::ExportMap()
 {
     if( m_Loaded && m_ObjectBuffer && m_ObjectMap )
     {
-
         printf("Writing Objects\n");
+        
+        std::string fileName;
+        fileName.resize(15);
+        sprintf(&fileName[0], "%u.obj", m_ZoneID);
+        
+        uint64_t totalVerts = 0;
+        uint64_t totalIndices = 0;
+        std::ofstream objFile(fileName, std::ios::out | std::ios::trunc);
+        objFile.close();
+        objFile.open(fileName, std::ios::ate | std::ios::app);
+        int updateFrequency = m_ObjectMapCount / 50;
+        uint64_t startTime = time(NULL);
+
+        printf("Exporting ");
         for (unsigned int i = 0; i < m_ObjectMapCount; i++)
         {
           MapObjectVertexBuffer::vertexCount = 1;
 
+          if (i % updateFrequency == 0)
+            printf(".");
+
           char name[100];
-          char* objName = "";
+          std::string objName = "";
           int id = 0;
           if(m_ObjectMap[i].Object){
-            objName = m_ObjectMap[i].Object->GetID();
+            objName = std::string(&m_ObjectMap[i].Object->GetID()[0], 16);
             id = m_ObjectMap[i].Object->m_ObjID;
+            objName = objName.substr(objName.find_first_not_of(' '), objName.find_first_of(' '));
+            if (!CanDumpObj(objName))
+               continue;
           }
 
-          sprintf(name, "obj_%d_%d_%.15s.obj", i, id, objName);
-          std::ofstream objFile(name);
+         // sprintf(name, "obj_%d_%d_%.15s.obj", i, id, objName);
+         // objFile << "\no " << name << "\n";
 
           if(!objFile.is_open()){
             return false;
@@ -132,18 +177,16 @@ bool MapExporter::ExportMap()
             if( m_ObjectMap[i].Object)
             {
               // if(m_ObjectMap[i].Object->
-                std::string* out = ObjectMapToObj(i, &m_ObjectMap[i]);
+                std::string* out = ObjectMapToObj(i, &m_ObjectMap[i], totalVerts);
                 objFile << out->c_str();
                 objFile << "\n";
 
                 delete out;
             }
-
-            int progress = (i / (float)m_ObjectMapCount) * 100;
-            printf("Progress: %%%d. Exporting (%d)\n", progress, i);
-            objFile.close();
+            //objFile.close();
         }
-
+        objFile.close();
+        printf("\nFinished exporting in %u seconds\n", time(NULL) - startTime);
 
         return true;
     }
@@ -151,9 +194,60 @@ bool MapExporter::ExportMap()
     return false;
 }
 
-std::string* MapExporter::ObjectMapToObj(unsigned int ID, ObjectMap* obj)
+bool MapExporter::CanDumpObj(const std::string& name)
 {
-    return obj->Object->ToObj(ID, obj->MatWorld, obj->CullMode);
+   bool push = true;
+   std::string reg = "";
+   // lambda to parse filters
+
+   auto filterFunc = [&](std::string filter, const std::string& mode) -> bool
+   {
+      int offset = 0;
+      auto inc = filter.substr(0, filter.find_first_of(" ", 0));
+      std::string ogFilter = filter;
+      bool isMatch = false;
+
+      offset += inc.size();
+      filter = filter.substr(offset + 1, filter.size() - 1);
+      if (filter.substr(0, 2) == "re")
+      {
+         std::regex re(reg = filter.substr(3, filter.size() - 1));
+
+         if (std::regex_match(name, re))
+         {
+            if (inc.substr(0, 3) == "exc" && mode == "exc")
+               isMatch = !(push = false);
+            else if (inc.substr(0, 3) == "inc" && mode == "inc")
+               isMatch = (push = true);
+         }
+      }
+      else if (name == filter)
+      {
+         if (inc.substr(0, 3) == "exc" && mode == "exc")
+            isMatch = !(push = false);
+         else if (inc.substr(0, 3) == "inc" && mode == "inc")
+            isMatch = (push = true);
+      }
+      
+      return (isMatch && push && mode == "inc");
+   };
+
+   for (auto i = 0; i < filters.size(); ++i)
+   {
+      std::string filterStr = filters[i];
+      filterFunc(filterStr, "exc");
+   }
+   for (auto i = 0; i < filters.size(); ++i)
+   {
+      std::string filterStr = filters[i];
+      filterFunc(filterStr, "inc");
+   }
+   return push;
+}
+
+std::string* MapExporter::ObjectMapToObj(unsigned int ID, ObjectMap* obj, uint64_t& totalVerts)
+{
+    return obj->Object->ToObj(ID, obj->MatWorld, obj->CullMode, totalVerts);
 }
 
 unsigned int MapExporter::GetZoneID()

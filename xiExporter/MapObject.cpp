@@ -1,4 +1,5 @@
 #include "MapObject.h"
+#include <cstdint>
 
 MapObject::MapObject(char* ID) : m_ObjectBufferCount(NULL)
 {
@@ -24,7 +25,7 @@ void MapObject::Release()
     m_ObjectBufferCount = NULL;
 }
 
-std::string* MapObject::ToObj(unsigned int ID, D3DXMATRIX matrix, D3DCULL cull)
+std::string* MapObject::ToObj(unsigned int ID, D3DXMATRIX matrix, D3DCULL cull, uint64_t& totalVerts)
 {
   // set object name
   std::string tempId(m_ID);
@@ -32,7 +33,7 @@ std::string* MapObject::ToObj(unsigned int ID, D3DXMATRIX matrix, D3DCULL cull)
   std::size_t pos = tempId.find_first_of(-51);
 
   std::stringstream* buf = new std::stringstream();
-
+  uint64_t tempVerts = totalVerts;
   // *buf << "o ";
   // buf->write(m_ID, pos);
   // *buf << ID << "\n";
@@ -40,14 +41,17 @@ std::string* MapObject::ToObj(unsigned int ID, D3DXMATRIX matrix, D3DCULL cull)
   // *buf << "g ";
   // buf->write(m_ID, pos);
   // *buf << ID << "\n";
-
+  std::string name(&m_ID[0], 16);
+  name = name.substr(name.find_first_not_of(' '), name.find_first_of(' '));
+  *buf << "o " << name << "_" << tempVerts << "\n";
   // output objects
-  for(int i=0; i<m_ObjectBufferCount; i++){
+  for(int i=0; i<m_ObjectBufferCount; i++)
     m_ObjectBuffers[i]->WriteVertexes(buf, matrix, cull);
-  }
 
+  uint64_t tempVertsCount = totalVerts;
   for(int i=0; i<m_ObjectBufferCount; i++){
-    m_ObjectBuffers[i]->WriteFaces(buf, matrix, cull);
+    *buf << "g " << name << "_" << tempVerts << "_" << i << "\n";
+    totalVerts += m_ObjectBuffers[i]->WriteFaces(buf, matrix, cull, tempVertsCount);
   }
 
   std::string* output = new std::string(buf->str());
